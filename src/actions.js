@@ -1,3 +1,5 @@
+import { notification } from "antd";
+
 export function setRepos(repos) {
   return {
     type: "REPOS_FETCH_SUCCESS",
@@ -12,23 +14,33 @@ export function loadingRepos(loading) {
   };
 }
 
+export function showNotification(message) {
+  return function(dispatch, getState) {
+    notification.open({
+      message: "API Error",
+      description: message.toString()
+    });
+  };
+}
+
 export function fetchGithubRepos(username) {
   return function(dispatch, getState) {
     dispatch(loadingRepos(true));
 
-    return fetch(`https://api.github.com/users/${username}/repos`)
+    fetch(`https://api.github.com/users/${username}/repos`)
       .then(response => {
         if (response.ok) {
           return response.json();
         } else {
-          throw Error(response);
+          throw Error("Username not found");
         }
       })
       .then(json => {
         dispatch(setRepos(json));
       })
       .catch(err => {
-        console.log(err);
+        dispatch(showNotification(err));
+        dispatch(setRepos([]));
       })
       .finally(() => dispatch(loadingRepos(false)));
   };
