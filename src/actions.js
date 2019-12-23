@@ -1,31 +1,21 @@
 import { notification } from "antd";
+import createAction from "redux-actions/lib/createAction";
 
-export function setRepos(repos) {
-  return {
-    type: "REPOS_FETCH_SUCCESS",
-    payload: repos
-  };
-}
+export const setLoadingRepositories = createAction('LOADING_REPOS');
+export const setRepositories = createAction('SET_REPOSITORIES');
 
-export function loadingRepos(loading) {
-  return {
-    type: "LOADING_REPOS",
-    loading
-  };
-}
-
-export function showNotification(message) {
+export function showApiErrorNotification(message) {
   return function(dispatch, getState) {
     notification.open({
       message: "API Error",
-      description: message.toString()
+      description: message.toString(),
     });
   };
 }
 
 export function fetchGithubRepos(username) {
   return function(dispatch, getState) {
-    dispatch(loadingRepos(true));
+    dispatch(setLoadingRepositories(true));
 
     fetch(`https://api.github.com/users/${username}/repos`)
       .then(response => {
@@ -36,12 +26,12 @@ export function fetchGithubRepos(username) {
         }
       })
       .then(json => {
-        dispatch(setRepos(json));
+        dispatch(setRepositories(json));
       })
       .catch(err => {
-        dispatch(showNotification(err));
-        dispatch(setRepos([]));
+        dispatch(showApiErrorNotification(err));
+        dispatch(setRepositories([]));
       })
-      .finally(() => dispatch(loadingRepos(false)));
+      .finally(() => dispatch(setLoadingRepositories(false)));
   };
 }

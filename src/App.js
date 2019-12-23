@@ -4,6 +4,7 @@ import "./App.css";
 import Input from "./containers/Input";
 import RepoList from "./containers/RepoList";
 import Repo from "./components/Repo";
+import CounterText from "./containers/CounterText";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
 
       <div style={{ width: "450px", margin: "0 auto" }}>
         <Input placeholder="GitHub username ↩" />
+        <CounterText />
         <RepoList render={repo => <Repo item={repo} />} />
       </div>
     </div>
