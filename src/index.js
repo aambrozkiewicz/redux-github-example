@@ -8,8 +8,13 @@ import rootReducer from "./reducers.js";
 import logger from "redux-logger";
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware } from "redux";
+import { saveState, loadState } from "./localState";
 
-const store = createStore(rootReducer, applyMiddleware(logger, thunk));
+const store = createStore(rootReducer, loadState(), applyMiddleware(logger, thunk));
+
+store.subscribe(() => {
+  saveState(store.getState());
+});
 
 ReactDOM.render(
   <Provider store={store}>
